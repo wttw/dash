@@ -1,0 +1,10 @@
+[% WRAPPER layouts/main.tt title='Dashboard' %]
+[% FOREACH category IN categories %]
+<h3>[% category.description |html %]</h3>
+<ul>
+[% FOREACH report IN category.reports -%]
+<li><a href="r/[% report.path %]/">[% report.description %]</a></li>
+[%- END %]
+</ul>
+[% END %]
+[% END %]

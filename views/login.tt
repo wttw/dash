@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="[% settings.charset %]" />
+<title>Dash Reporting</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="[% uri_base %]/css/bootstrap.min.css">
+<style type="text/css">
+body {
+  padding-top: 60px;
+}
+</style>
+<link rel="stylesheet" href="[% uri_base %]/css/bootstrap-responsive.min.css">
+<link rel="stylesheet" href="[% uri_base %]/css/style.css">
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<script src="[% uri_base %]/js/jquery.js"></script>
+<script src="[% uri_base %]/js/bootstrap.min.js"></script>
+<link rel="shortcut icon" href="[% uri_base %]/img/favicon.ico">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+<a class="brand" href="[% uri_base %]/">Dash</a>
+</div></div></div>
+<div class="container">
+<div id="errors">
+[% FOREACH f IN flash %]
+<div class="alert alert-[% f.type %]">
+<h4 class="alert-heading">[% f.title | html %].</h4>
+[% f.message | html %]
+</div>
+[% END %]
+</div>
+<form class="form-horizontal" method="POST" action="[% uri_base %]/login">
+<fieldset>
+<div class="control-group">
+<label class="control-label" for="username">Username</label>
+<div class="controls">
+<input type="text" class="input-xlarge" name="username" id="username" value="[% username %]"[% IF !username %] autofocus="autofocus"[% END %]>
+</div>
+</div>
+<div class="control-group">
+<label class="control-label" for="password">Password</label>
+<div class="controls">
+<input type="password" class="input-xlarge" name="password" id="password"[% IF username %] autofocus="autofocus"[% END %]>
+</div>
+</div>
+<div class="control-group">
+<div class="controls">
+<button type="submit" class="btn btn-primary">Login</button>
+</div>
+<input type="hidden" name="path" value="[% path %]">
+</div>
+</fieldset>
+</form>
+</div>
+<footer>
+</footer>
+</body>
+</html>

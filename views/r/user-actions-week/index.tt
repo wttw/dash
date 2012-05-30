@@ -1,0 +1,56 @@
+[% WRAPPER layouts/main.tt title='User statistics for this week' %]
+<script>
+$(document).ready(function() {
+  var sql1 = "select owner, count(*) from ticket where state='Open' group by 1"
+  var sql2 = "select owner, count(*), to_char(avg(extract(epoch from modified) - extract(epoch from created)) * interval '1 second', 'HH24:MI') from ticket where state='Closed' and modified >= current_date - interval '7 days' group by 1";
+
+ $('#maintable').dataTable( {
+    "bProcessing": true,
+    "bDeferRender": true,
+    "bPaginate": true,
+    "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>><'row'<'span6'T><'span6'>>",
+    "sPaginationType": "bootstrap",
+    "oLanguage": {
+        "sLengthMenu": "_MENU_ records per page"
+    },
+    "oTableTools": {
+        "sSwfPath": "[% uri_base %]/swf/copy_cvs_xls_pdf.swf"
+    }
+  } );
+
+
+  var result1, result2;
+  var pending=2;
+  function processData() {
+    var scratch = new Object();
+    tuplesToColumns(scratch, result1.data, [ 0, 1 ]);
+    tuplesToColumns(scratch, result2.data, [ 0, 2, 3 ]);
+    var grid = columnsToGrid(scratch, ['', 0, 0, '']);
+    $('#maintable').dataTable().fnAddData(grid);
+  }
+  $.get('../../sql/opentickets.json', {
+    sql: sql1
+  }, function(data) {
+    showErrors(data);
+    result1 = data;
+    if(--pending == 0) processData();
+  });
+  $.get('../../sql/closetime.json', {
+    sql: sql2
+  }, function(data) {
+    showErrors(data);
+    result2 = data;
+    if(--pending == 0) processData();
+  });
+  
+});
+</script>
+<h1 class="page-header">User statistics for this week</h1>
+<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="maintable">
+<thead>
+<tr><th>user</th><th>open tickets</th><th>closed this week</th><th>average time to close this week</th></tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+[% END %]

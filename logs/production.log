@@ -1,0 +1,6 @@
+[2331] error @0.001391> [hit #26]Looking for r/tickets-28-by-customer//index - got /home/steve/dash/views/r/tickets-28-by-customer/index.tt in /home/steve/dash/bin/../lib/Dancer/Renderer.pm l. 172
+[2331] error @0.001626> [hit #56]Looking for r/customer-tickets-28-by-day//index - got /home/steve/dash/views/r/customer-tickets-28-by-day/index.tt in /home/steve/dash/bin/../lib/Dancer/Renderer.pm l. 172
+[2331] error @0.001644> [hit #107]Looking for r/user-actions-week//index - got /home/steve/dash/views/r/user-actions-week/index.tt in /home/steve/dash/bin/../lib/Dancer/Renderer.pm l. 172
+[2331] error @0.001254> [hit #138]Looking for r/system-df//index - got /home/steve/dash/views/r/system-df/index.tt in /home/steve/dash/bin/../lib/Dancer/Renderer.pm l. 172
+[2331] error @0.001873> [hit #169]Looking for r/system-configuration//index - got /home/steve/dash/views/r/system-configuration/index.tt in /home/steve/dash/bin/../lib/Dancer/Renderer.pm l. 172
+[2331] error @0.001260> [hit #200]Looking for r/system-database//index - got /home/steve/dash/views/r/system-database/index.tt in /home/steve/dash/bin/../lib/Dancer/Renderer.pm l. 172

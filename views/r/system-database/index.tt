@@ -1,0 +1,39 @@
+[% WRAPPER layouts/main.tt title='System Overview' %]
+<script>
+$(document).ready(function() {
+  simpleTable($('#databasesettings'), '../../sql/dbsettings.json', '[% uri_base %]', "\
+SELECT\
+   'version'::text AS name,\
+   version() AS current_setting\
+ UNION ALL\
+ SELECT\
+   name,current_setting(name) \
+ FROM pg_settings \
+ WHERE source != 'default' AND name NOT IN\
+   ('ident_file','config_file','data_directory','hba_file',\
+   'log_timezone','DateStyle','lc_messages','lc_monetary',\
+   'lc_numeric','lc_time','timezone_abbreviations',\
+   'default_text_search_config','application_name',\
+   'transaction_deferrable','transaction_isolation',\
+   'transaction_read_only')\
+");
+  simpleTable($('#databasepaths'), '../../sql/dbpaths.json', '[% uri_base %]', 'select name, setting from fetch_path(\'%\')');
+  pagedTable($('#databasesize'), '../../sql/dbsize.json', '[% uri_base %]', "\
+SELECT nspname || '.' || relname AS relation,\
+    pg_size_pretty(pg_total_relation_size(C.oid)) AS total_size\
+  FROM pg_class C\
+  LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)\
+  WHERE nspname NOT IN ('pg_catalog', 'information_schema')\
+    AND C.relkind <> 'i'\
+    AND nspname !~ '^pg_toast'\
+  ORDER BY pg_total_relation_size(C.oid) DESC\
+");
+});
+</script>
+<h1 class="page-header">Database Settings</h1>
+<table id="databasesettings"></table>
+<h1 class="page-header">Database Paths</h1>
+<table id="databasepaths"></table>
+<h1 class="page-header">Database Disk Usage</h1>
+<table id="databasesize"></table>
+[% END %]

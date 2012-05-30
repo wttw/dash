@@ -1,0 +1,11 @@
+[% WRAPPER layouts/main.tt title='Sample Report' %]
+<script>
+$(document).ready(function() {
+  var sql = "select * from userlist";
+  pagedTable($('#userlist'), '../../sql/userlist.json', '[% uri_base %]', sql);
+}
+</script>
+<h1 class="page-header">List of users</h1>
+<table id="userlist">
+</table>
+[% END %]

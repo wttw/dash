@@ -1,0 +1,102 @@
+dash - Dashboard and Reporting
+
+Prerequisites
+=============
+
+Most of dash is implemented in javascript but it uses a perl backend, and
+that has some prerequisites.
+
+Configuration
+=============
+
+The reportuser.sql script needs to be modified to provide a validate_login()
+function that is used to limit access to reports. The simplest body of the
+function would be "select $1" to allow anyone to log in.
+
+It also needs to provide the reports user access to any tables and functions
+that need to be available for reporting.
+
+Then the reports user needs to be added to the database if it
+doesn't already exist, by running:
+
+    psql -U postgres -f reportuser.sql <database>
+
+Depending on how database authentication is configured this may need
+to be run as the "postgres" user.
+
+Database connection details need to be configured in config.yml.
+This is for the "reports" user, and is used for all database
+access.
+
+Postgresql must be configured, via pg_hba.conf, to allow access for this
+user to the database, by the user/host where the dash web
+application runs.
+
+Running dash
+============
+
+At it's most basic, dash just needs access to the database. However,
+running it on the same server as the database allows it to report on some
+system-level metrics too, in particular disk space.
+
+Dash is a perldancer based application, so can be deployed in many ways,
+including CGI, FastCGI, PSGI or using mod_perl from within Apache. The
+simplest way to run it is as a standalone server, though:
+
+    ./bin/app.pl --daemon --environment=production
+
+This will start a webserver on port 3000, which can be accessed from a browser
+at http://some.host.name:3000/ .
+
+It can also be started in the foreground with "./bin/app.pl" where diagnostics
+will be printed to the console.
+
+Security
+========
+
+Dash provides anyone using it with complete access to the database via the
+reports user. This user has restricted, read-only access to a subset
+of tables.
+
+Extensibility
+=============
+
+Each report is a directory under dash/views/r. Each report directory must have
+at least two files, meta.yaml and index.tt.
+
+meta.yaml contains metadata about the report, allowing it to be added to
+the overall list of reports and the menu system. It's a simple YAML
+structure file that must contain at least three entries:
+
+    description: the name of the report as displayed in the menu
+    order:       the numeric order in which this report is displayed
+    category:    the category under which this report is listed
+
+index.tt is a TemplateToolkit formatted file that is converted into the
+html report that is sent to the user. Useful variables that are passed
+in to the template include "[% uri_base %]" - the URL for the top level
+of the application - and [% today %] - today's date in year-month-day format.
+
+All database access is handled via AJAX calls to the path /sql/something.json.
+All queries must have a "sql" parameter containing the SQL to be executed.
+Any other variables passed in to the query will be used to substitute
+parenthesised words in the query - e.g. this query will return information
+about the user bob:
+
+$.ajax({
+  url: '[% uri_base %]/sql/foo.json',
+  data: {
+    sql: "select * from userlist where username=(name)",
+    name: 'bob'
+  },
+  success: function(data) {
+    // Data about bob 
+  }
+});
+
+There's a minimal sample report under views/r/example that shows how to
+display the results of a simple SQL query.
+
+The name of the file retrieved is used only for reporting errors, but the
+suffix is used to determine the format of results. Valid formats include
+json, perl, xml, csv, table and html.

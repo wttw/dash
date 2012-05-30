@@ -1,0 +1,15 @@
+[% WRAPPER layouts/main.tt title='SQL Access' %]
+<script>
+$(document).ready(function() {
+  $('#run').click(function() {
+    $('#errors').empty();
+    $('#results').empty().append('<table></table>');
+    pagedTable($('#results table'), '../../sql/adhoc.json', '[% uri_base %]', $('#sql').val());
+  });
+});
+</script>
+<h1 class="page-header">SQL Access</h1>
+<div class="row-fluid"><div class="span12"><textarea cols="80" id="sql" placeholder="Enter SQL select here"></textarea></div></div>
+<button class="btn btn-primary" id="run">Run Query</button>
+<div id="results"></div>
+[% END %]

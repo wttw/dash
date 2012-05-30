@@ -1,0 +1,26 @@
+[% IF data.errors %]
+<ul class="errors">
+[% FOREACH error IN data.errors -%]
+<li>[% error |html %]</li>
+[% END %]
+</ul>
+[% ELSE %]
+<table class="db">
+<thead>
+<tr>
+[% FOREACH col in data.columns -%]
+<th>[% col |html %]</th>
+[% END -%]
+</tr>
+</thead>
+<tbody>
+[% FOREACH row in data.data -%]
+<tr>
+[% FOREACH cell in row -%]
+<td>[% cell |html %]</td>
+[% END -%]
+</tr>
+[% END %]
+</tbody>
+</table>
+[% END %]

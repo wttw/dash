@@ -1,0 +1,9 @@
+[% WRAPPER layouts/main.tt title='System Configuration' %]
+<script>
+$(document).ready(function() {
+  simpleTable($('#databasepaths'), '../../sql/dbpaths.json', '[% uri_base %]', 'select name, setting from fetch_path(\'%\')');
+});
+</script>
+<h1 class="page-header">Database Paths</h1>
+<table id="databasepaths"></table>
+[% END %]

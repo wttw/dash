@@ -1,0 +1,57 @@
+[% WRAPPER layouts/main.tt title='System Overview' %]
+<script>
+$(document).ready(function() {
+  $.ajax({
+    url: '../../info/diskusage.json',
+    dataType: 'json',
+    success: function(data) {
+      var filesystems = {};
+      for(var i=0; i<data.data.length; ++i) {
+        if(data.data[i][2] in filesystems) {
+          filesystems[data.data[i][2]].uses.push(data.data[i][0]);
+        } else {
+          filesystems[data.data[i][2]] = {
+            uses: [ data.data[i][0] ],
+            values: data.data[i]
+          };
+        }
+      }
+      var keys = Object.keys(filesystems);
+      keys.sort(function(a, b) {
+        return parseInt(a.values[6]) - parseInt(b.values[6]);
+      });
+      for(var i=0; i<keys.length; ++i) {
+      	console.log("i=", i);
+console.log(filesystems[keys[i]]);
+        var row = $('<tr/>');
+	$('#diskusage').append(row);
+	row.append($('<td/>').attr('valign', 'top').append($('<h1/>').css('margin-right', '40px').text(filesystems[keys[i]].values[6])));
+	var list = $('<td/>').attr('valign', 'top').append($('<h3/>').text(filesystems[keys[i]].values[2]));
+	for(var j=0; j<filesystems[keys[i]].uses.length; ++j) {
+          list.append($('<small/>').text(filesystems[keys[i]].uses[j]).append('<br/>'));
+        }
+	row.append(list);
+      }
+    },
+    error: function(jqxhr, testStatus, errorThrown) {
+	    $('<div class="alert alert-error"><a class="close" data-dismiss="alert">&times</a></div>').append($('<span/>', { text: 'Failed to retrieve disk usage: ' +errorThrown })).appendTo('#errors');
+    }
+  });
+  pagedTable($('#databasesize'), '../../sql/dbsize.json', '[% uri_base %]', "\
+SELECT nspname || '.' || relname AS relation,\
+    pg_size_pretty(pg_total_relation_size(C.oid)) AS total_size\
+  FROM pg_class C\
+  LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)\
+  WHERE nspname NOT IN ('pg_catalog', 'information_schema')\
+    AND C.relkind <> 'i'\
+    AND nspname !~ '^pg_toast'\
+  ORDER BY pg_total_relation_size(C.oid) DESC\
+");
+});
+</script>
+<h1 class="page-header">Disk Used</h1>
+<table id="diskusage">
+</table>
+<h1 class="page-header">Database Disk Used</h1>
+<table id="databasesize"></table>
+[% END %]

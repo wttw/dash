@@ -1,0 +1,4 @@
+name:        example
+description: Sample Report
+order:       100
+category:    Samples

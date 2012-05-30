@@ -1,0 +1,5 @@
+name:        sql-adhoc
+description: Ad-hoc queries
+order:       850
+category:    SQL
+
